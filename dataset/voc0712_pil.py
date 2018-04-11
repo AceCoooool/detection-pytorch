@@ -8,7 +8,8 @@ Updated by: Ellis Brown, Max deGroot
 
 import os
 import os.path
-import cv2
+from dataset.augment_pil import ToNumpy
+from PIL import Image
 import numpy as np
 import torch
 from torch.utils import data
@@ -52,8 +53,8 @@ class VOCDetection(data.Dataset):
     def pull_item(self, index):
         img_id = self.ids[index]
         target = ET.parse(self._annopath % img_id).getroot()
-        img = cv2.imread(self._imgpath % img_id)
-        height, width, channel = img.shape
+        img = Image.open(self._imgpath % img_id)
+        width, height = img.size
 
         if self.target_transform is not None:
             target = self.target_transform(target, width, height)
@@ -61,10 +62,20 @@ class VOCDetection(data.Dataset):
         if self.transform is not None:
             target = np.array(target)
             img, boxes, labels = self.transform(img, target[:, :4], target[:, 4])
-            img = img[:, :, (2, 1, 0)]  # bgr->rgb
-            target = np.hstack(boxes, np.expand_dims(labels, axis=1))
+            target = np.c_[boxes, np.expand_dims(labels, axis=1)]
 
         return torch.from_numpy(img).permute(2, 0, 1), target, height, width
+
+    # Note: back PIL.Image form
+    def pull_image(self, index):
+        img_id = self.ids[index]
+        return Image.open(self._imgpath % img_id)
+
+    def pull_anno(self, index):
+        img_id = self.ids[index]
+        anno = ET.parse(self._annopath % img_id).getroot()
+        gt = self.target_transform(anno, 1, 1)  # back original size
+        return img_id[1], gt
 
 
 class AnnotationTransform(object):
@@ -104,6 +115,22 @@ class AnnotationTransform(object):
         return res
 
 
+# basic transform: norm+scale
+class BaseTransform(object):
+    # image: PIL.Image form (output image is np.array)
+    def __init__(self, size=300, mean=(123, 117, 104), scale=False):
+        self.size = size
+        self.mean = np.array(mean, dtype=np.float32)
+        self.scale = scale
+
+    def __call__(self, image, boxes=None, labels=None):
+        image = image.resize((self.size, self.size))
+        image, _, _ = ToNumpy()(image)
+        image -= self.mean
+        image = image / 255.0 if self.scale else image
+        return image, boxes, labels
+
+
 def detection_collate(batch):
     targets = []
     imgs = []
@@ -114,10 +141,12 @@ def detection_collate(batch):
 
 
 if __name__ == '__main__':
+    from dataset.augment_pil import Augmentation
+
     root = '/home/ace/data/VOCdevkit'
     image_set = [('2007', 'trainval'), ('2012', 'trainval')]
     target_transform = AnnotationTransform()
-    dataset = VOCDetection(root, image_set, transform=None, target_transform=target_transform)
+    dataset = VOCDetection(root, image_set, transform=Augmentation(), target_transform=target_transform)
     img, gt = dataset[0]
     print(img)
     print(gt)

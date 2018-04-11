@@ -9,7 +9,7 @@ cfg = {
 
 
 # vgg feature part: remove last max-pooling
-def vgg_feat(cfg, i, batch_norm=False):
+def vgg_feat(cfg=cfg['D'], i=3, batch_norm=False):
     layers = []
     in_channels = i
     for v in cfg:
@@ -24,19 +24,23 @@ def vgg_feat(cfg, i, batch_norm=False):
             else:
                 layers += [conv2d, nn.ReLU(inplace=True)]
             in_channels = v
-    return nn.Sequential(*layers)
+    return layers
 
 
 def convertweight(vgg_trained, root):
-    torch.save(vgg_trained.feature.state_dict(), root)
+    torch.save(vgg_trained.features.state_dict(), root)
 
 
 if __name__ == '__main__':
     import torch
-    from torch.autograd import Variable
+
+    # from torchvision.models import vgg16
+    # root = '../weights/vgg16.pth'
+    # convertweight(vgg16(True), root)
 
     net = vgg_feat(cfg['D'], 3)
-    net.load_state_dict(torch.load('../weights/vgg16_reducedfc.pth'))
-    img = Variable(torch.randn((1, 3, 300, 300)))
-    res = net(img)
-    print(res)
+    # net = nn.Sequential(*net)
+    net.load_state_dict(torch.load('../weights/vgg16.pth'))
+    # img = Variable(torch.randn((1, 3, 300, 300)))
+    # res = net(img)
+    # print(res)
