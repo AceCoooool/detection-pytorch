@@ -9,7 +9,7 @@ Updated by: Ellis Brown, Max deGroot
 import os
 import os.path
 from dataset.augment_pil import ToNumpy
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 import torch
 from torch.utils import data
@@ -129,6 +129,24 @@ class BaseTransform(object):
         image -= self.mean
         image = image / 255.0 if self.scale else image
         return image, boxes, labels
+
+
+# image: PIL.Image, label: string (class+score), boxe: tuple, c: int
+def draw_box(image, label, box, c):
+    w, h = image.size
+    thickness = (w + h) // 300
+    draw = ImageDraw.Draw(image)
+    label_size = draw.textsize(label)
+    left, top, right, bottom = box
+    top, left = max(0, np.round(top).astype('int32')), max(0, np.round(left).astype('int32'))
+    right, bottom = min(w, np.round(right).astype('int32')), min(h, np.round(bottom).astype('int32'))
+    print(label, (left, top), (right, bottom))
+    text_orign = np.array([left, top - label_size[1]]) if top - label_size[1] >= 0 else np.array([left, top + 1])
+    for i in range(thickness):
+        draw.rectangle([left + i, top + i, right - i, bottom - i], outline=cfg.colors[c])
+    draw.rectangle([tuple(text_orign), tuple(text_orign + label_size)], fill=cfg.colors[c])
+    draw.text(text_orign, label, fill=(0, 0, 0))
+    del draw
 
 
 def detection_collate(batch):

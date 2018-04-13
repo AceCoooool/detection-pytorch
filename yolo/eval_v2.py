@@ -1,7 +1,6 @@
 import torch
 import os.path
 import numpy as np
-import pickle
 import importlib
 
 import yolo.config.yolo_voc as cfg
@@ -10,7 +9,6 @@ from utils.extras import Timer, get_output_dir
 from utils.utils_eval import voc_eval
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
-use_cv2 = False
 if use_cv2:
     from dataset.voc0712_cv import VOCDetection, BaseTransform, AnnotationTransform
 else:
@@ -71,9 +69,9 @@ def pred_file(filename, files, office):
 
 # evaluate map
 def test_map(files):
-    annopath = os.path.join(cfg.devkit_path, 'VOC2007', 'Annotations', '{:s}.xml')
-    imagesetfile = os.path.join(cfg.devkit_path, 'VOC2007', 'ImageSets', 'Main', 'test.txt')
-    cachedir = os.path.join(cfg.devkit_path, 'annotations_cache')
+    annopath = os.path.join(cfg.voc_root, 'VOC2007', 'Annotations', '{:s}.xml')
+    imagesetfile = os.path.join(cfg.voc_root, 'VOC2007', 'ImageSets', 'Main', 'test.txt')
+    cachedir = os.path.join(cfg.voc_root, 'annotations_cache')
     aps = []
     for i, cls in enumerate(cfg.classes):
         if cls == '__background__':
