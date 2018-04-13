@@ -69,7 +69,7 @@ def pred_file(filename, files, office):
 
 # evaluate map
 def test_map(files):
-    annopath = os.path.join(cfg.voc_root, 'VOC2007', 'Annotations', '{:s}.xml')
+    annopath = os.path.join(cfg.voc_root, 'VOC2007', 'Annotations', '%s.xml')
     imagesetfile = os.path.join(cfg.voc_root, 'VOC2007', 'ImageSets', 'Main', 'test.txt')
     cachedir = os.path.join(cfg.voc_root, 'annotations_cache')
     aps = []
