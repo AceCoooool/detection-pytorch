@@ -9,7 +9,7 @@ from utils.extras import Timer, get_output_dir
 from utils.utils_eval import voc_eval
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
-# use_cv2 = False
+
 if use_cv2:
     from dataset.voc0712_cv import VOCDetection, BaseTransform, AnnotationTransform
 else:

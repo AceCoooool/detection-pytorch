@@ -62,6 +62,8 @@ def nms(boxes, scores, overlap=0.5, top_k=200):
     return keep, count
 
 
+
+
 if __name__ == '__main__':
     a = torch.Tensor([[2, 3, 4, 5], [3, 4, 5, 6]]).view(1, 1, 2, 4)
     print(point_form(a))

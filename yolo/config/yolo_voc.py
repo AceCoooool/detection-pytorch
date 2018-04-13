@@ -59,14 +59,15 @@ class_scale = 1
 coord_scale = 1
 
 # -----testing set-----
-test_cuda = True
+test_cuda = False
 # Note: the office weights not minus means
 use_office = True
-trained_model = '../weights/yolo/yolo-voc.pth'
+trained_model = '../weights/yolo/single.pth'
+# trained_model = '../weights/yolo/yolo-voc.pth'
 output_folder = '../results/yolo'
 
 # -----eval set-----
-eval_score_threshold = 1e-3
+eval_score_threshold = 1e-4
 eval_nms_threshold = 0.3
 
 # demo parameter
