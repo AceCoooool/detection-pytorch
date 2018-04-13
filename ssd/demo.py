@@ -4,8 +4,8 @@ import os
 import importlib
 from utils.extras import get_output_dir
 from dataset.config import VOC_CLASSES as labelmap
-from yolo.config import yolo_voc as cfg
-from yolo.yolov2 import build_yolo
+from ssd import config as cfg
+from ssd.ssd300 import build_ssd
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
 if use_cv2:
@@ -17,15 +17,11 @@ else:
 
 
 def demo(img_list, save_path=None):
-    net = build_yolo('test', cfg)
+    net = build_ssd('test', bone=cfg.bone)
     net.load_state_dict(torch.load(cfg.trained_model))
     if cfg.test_cuda: net = net.cuda()
     net.eval()
-    if cfg.use_office:
-        mean = (0, 0, 0)
-    else:
-        mean = (104, 117, 123) if use_cv2 else (123, 117, 104)
-    transform = BaseTransform(size=416, mean=mean, scale=True)
+    transform = BaseTransform()
     for img in img_list:
         if use_cv2:
             image = cv2.imread(img)
@@ -35,21 +31,20 @@ def demo(img_list, save_path=None):
             w, h = image.size
         scale = np.array([w, h, w, h])
         x, _, _ = transform(image)
-        x = x[:, :, (2, 1, 0)] if use_cv2 else x
         x = torch.from_numpy(x).permute(2, 0, 1).unsqueeze(0)
         if cfg.test_cuda: x = x.cuda()
         with torch.no_grad():
             y = net(x)
-        for i in range(y.size(1)):
+        for i in range(1, y.size(1)):
             idx = (y[0, i, :, 0] > 0.5)
             dets = y[0, i][idx].view(-1, 5)
             if dets.numel() == 0:
                 continue
-            print('Find {} {} for {}.'.format(dets.size(0), labelmap[i], img.split('/')[-1]))
+            print('Find {} {} for {}.'.format(dets.size(0), labelmap[i-1], img.split('/')[-1]))
             score, loc = dets[:, 0], dets[:, 1:].cpu().numpy() * scale
             for k in range(len(score)):
-                label = '{} {:.2f}'.format(labelmap[i], score[k])
-                draw_box(image, label, loc[k], i)
+                label = '{} {:.2f}'.format(labelmap[i-1], score[k])
+                draw_box(image, label, loc[k], i-1)
         if use_cv2:
             cv2.imwrite(os.path.join(save_path, img.split('/')[-1]), image)
         else:

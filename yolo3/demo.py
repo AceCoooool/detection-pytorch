@@ -3,9 +3,9 @@ import torch
 import os
 import importlib
 from utils.extras import get_output_dir
-from dataset.config import VOC_CLASSES as labelmap
-from yolo.config import yolo_voc as cfg
-from yolo.yolov2 import build_yolo
+from dataset.config import COCO_CLASSES as labelmap
+from yolo3.config import yolo3_coco as cfg
+from yolo3.yolov3 import build_yolo3
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
 if use_cv2:
@@ -17,7 +17,7 @@ else:
 
 
 def demo(img_list, save_path=None):
-    net = build_yolo('test', cfg)
+    net = build_yolo3('test', cfg)
     net.load_state_dict(torch.load(cfg.trained_model))
     if cfg.test_cuda: net = net.cuda()
     net.eval()

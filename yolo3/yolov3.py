@@ -1,6 +1,10 @@
+import numpy as np
 import torch
 from torch import nn
+import torch.nn.functional as F
 from basenet.darknet53 import darknet_feat, ConvLayer
+from yolo.utils_yolo.priorbox import PriorBox
+from yolo.utils_yolo.detect import Detect
 from yolo3.config import yolo3_coco as cfg
 
 yolo_extras = [7, 7, 7]
@@ -34,15 +38,22 @@ def extras_layers(num_classes, _extras=yolo_extras, _channels=yolo_channels):
 
 # TODO: change to voc
 class Yolo3(nn.Module):
-    def __init__(self, phase, cfg, out=yolo_combine):
+    def __init__(self, phase, cfg, out=yolo_combine, eval=False):
         super(Yolo3, self).__init__()
         self.cfg = cfg
         self.phase = phase
+        self.class_num = cfg.class_num
         self.bone = nn.ModuleList(darknet_feat())
-        self.extras = extras_layers(cfg.num_classes)
+        self.extras = extras_layers(cfg.class_num)
         self.extras = nn.ModuleList([nn.ModuleList(ex) for ex in self.extras])
         self.convnum = range(1, len(self.extras), 2)
         self.out = out
+        self.anchors = np.array(cfg.anchors).reshape(-1, 2)
+        self.anchor_num = 3
+        self.priors = [PriorBox(self.anchors[6:, :] / 32, 13)(), PriorBox(self.anchors[3:6, :] / 16, 26)(),
+                       PriorBox(self.anchors[:3, :] / 8, 52)()]
+        if phase == 'test':
+            self.detect = Detect(cfg, eval)
 
     def forward(self, x):
         b_out, out = list(), list()
@@ -61,10 +72,26 @@ class Yolo3(nn.Module):
                     x = self.extras[i][j](x)
                     if j == 4: temp = x
                 out.append(x)
+        box_pred3, box_conf3, box_prob3 = list(), list(), list()
+        for i in range(len(out)):
+            b, c, h, w = out[i].size()
+            feat = out[i].permute(0, 2, 3, 1).contiguous().view(b, -1, self.anchor_num, self.class_num + 5)
+            box_xy, box_wh = F.sigmoid(feat[..., :2]), feat[..., 2:4].exp()
+            box_xy += self.priors[i][..., 0:2]
+            box_wh *= self.priors[i][..., 2:]
+            box_conf, box_prob = F.sigmoid(feat[..., 4:5]), feat[..., 5:]
+            box_pred = torch.cat([box_xy, box_wh], 3) / h
+            box_pred3.append(box_pred)
+            box_conf3.append(box_conf)
+            box_prob3.append(box_prob)
+        box_pred = torch.cat(box_pred3, dim=1)
+        box_conf = torch.cat(box_conf3, dim=1)
+        box_prob = torch.cat(box_prob3, dim=1)
         if self.phase == 'train':
-            pass  # TODO: unfinish
+            pass  # TODO: unfinished
         else:
-            return out
+            # TODO: this may not right
+            return self.detect(box_pred, box_conf, F.softmax(box_prob, dim=3))
 
 
 def build_yolo3(phase, cfg=cfg):
@@ -88,4 +115,4 @@ if __name__ == '__main__':
     # yolo.load_state_dict(torch.load('../weights/yolo3/yolo3.pth'))
     img = torch.ones((1, 3, 416, 416))
     out = yolo(img)
-    print(out[2])
+    print(out)

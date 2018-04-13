@@ -1,5 +1,5 @@
 import os.path
-from dataset.config import VOC_CLASSES
+from dataset.config import VOC_CLASSES as classes
 
 home = os.path.expanduser("~")
 
@@ -21,8 +21,12 @@ save_folder = '../weights/ssd/'  # Location to save checkpoint models
 voc_root = os.path.join(home, "data/VOCdevkit/")
 
 # ----test setting----
-test_cuda = False
-trained_model = '../weights/ssd/vgg_final.pth'
+bone = 'vgg'
+test_cuda = True
+if bone == 'vgg':
+    trained_model = '../weights/ssd/vgg_final.pth'
+else:
+    trained_model = '../weights/ssd/resnet_final.pth'
 output_folder = '../results/ssd'
 top_k = 200
 conf_thresh = 0.01
@@ -39,7 +43,7 @@ stepvalues = (150, 190)
 train_sets = [('2007', 'trainval'), ('2012', 'trainval')]
 ssd_dim = 300
 means = (104, 117, 123)  # bgr form
-num_classes = len(VOC_CLASSES) + 1
+num_classes = len(classes) + 1
 
 # ----box information----
 extras_vgg = {'300': [256, 'S', 512, 128, 'S', 256, 128, 256, 128, 256]}
