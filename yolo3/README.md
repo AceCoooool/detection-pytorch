@@ -28,5 +28,10 @@ Note：
 2. the "boxed" image is in `results/yolo3/demo`
 
 
+## 3. Network Architecture
 
-Welcome to pull issue if you meet some problems～:smile:
+![](../png/yolo31.png)
+
+
+
+Welcome to pull issue if you meet some problems～
