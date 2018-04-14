@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -9,9 +12,16 @@ from ssd.utils_ssd.priorbox import PriorBox
 from ssd.utils_ssd.L2Norm import L2Norm
 from ssd.utils_ssd.detect import Detect
 
+extras_vgg = {'300': [256, 'S', 512, 128, 'S', 256, 128, 256, 128, 256]}
+extras_res = {'300': [256, 'S', 512, 128, 'S', 256, 128, 256, 128, 256]}
+l_vgg = [23, 512]
+l_res = [11, 512]
+mbox_vgg = {'300': [(512, 4), (1024, 6), (512, 6), (256, 6), (256, 4), (256, 4)]}
+mbox_res = {'300': [(512, 4), (2048, 6), (512, 6), (256, 6), (256, 4), (256, 4)]}
+
 
 # extend vgg: 5 "additional" feature parts
-def add_extras(cfg, i, vgg=True):
+def add_extras(i, cfg=extras_vgg, vgg=True):
     fc7 = [nn.MaxPool2d(3, 1, 1), nn.Conv2d(512, 1024, 3, 1, 6, 6), nn.ReLU(inplace=True),
            nn.Conv2d(1024, 1024, 1), nn.ReLU(inplace=True)] if vgg else []
     layers = []
@@ -30,7 +40,7 @@ def add_extras(cfg, i, vgg=True):
 
 
 # feature map to loc+conf
-def multibox(cfg, num_classes):
+def multibox(num_classes=21, cfg=mbox_vgg):
     loc_layers = []
     conf_layers = []
     for channel, n in cfg:
@@ -41,7 +51,7 @@ def multibox(cfg, num_classes):
 
 # single shot multibox detector
 class SSD(nn.Module):
-    def __init__(self, phase, base, extras, loc, conf, num_classes, l=[23, 512]):
+    def __init__(self, phase, base, extras, loc, conf, num_classes, l=l_vgg):
         super(SSD, self).__init__()
         self.phase = phase
         self.num_classes = num_classes
@@ -99,14 +109,14 @@ def build_ssd(phase, size=300, num_classes=21, bone='vgg'):
         assert "Error: Only SSD300 us supported"
     if bone == 'vgg':
         base_ = vgg_feat()
-        fc7_, extras_ = add_extras(cfg.extras_vgg['300'], 1024)
-        loc_, conf_ = multibox(cfg.mbox_vgg['300'], num_classes)
-        l = cfg.l_vgg
+        fc7_, extras_ = add_extras(1024, extras_vgg['300'])
+        loc_, conf_ = multibox(num_classes, mbox_vgg['300'])
+        l = l_vgg
     elif bone == 'res101':
         base_ = resnet101_feat()
-        fc7_, extras_ = add_extras(cfg.extras_res['300'], 2048, False)
-        loc_, conf_ = multibox(cfg.mbox_res['300'], num_classes)
-        l = cfg.l_res
+        fc7_, extras_ = add_extras(2048, extras_res['300'], False)
+        loc_, conf_ = multibox(num_classes, mbox_res['300'])
+        l = l_res
     else:
         raise IOError("only vgg or res101")
     return SSD(phase, base_ + fc7_, extras_, loc_, conf_, num_classes, l)
@@ -114,8 +124,6 @@ def build_ssd(phase, size=300, num_classes=21, bone='vgg'):
 
 if __name__ == '__main__':
     net = build_ssd('train', bone='vgg')
-    bone = net.bone
-    print(bone)
     img = torch.randn((1, 3, 300, 300))
     out = net(img)
     print(out[1])

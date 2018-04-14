@@ -33,14 +33,8 @@ def convertweight(vgg_trained, root):
 
 if __name__ == '__main__':
     import torch
-
-    # from torchvision.models import vgg16
-    # root = '../weights/vgg16.pth'
-    # convertweight(vgg16(True), root)
-
     net = vgg_feat(cfg['D'], 3)
-    # net = nn.Sequential(*net)
-    net.load_state_dict(torch.load('../weights/vgg16.pth'))
-    # img = Variable(torch.randn((1, 3, 300, 300)))
-    # res = net(img)
-    # print(res)
+    net = nn.Sequential(*net)
+    img = torch.randn((1, 3, 300, 300))
+    res = net(img)
+    print(res.size())

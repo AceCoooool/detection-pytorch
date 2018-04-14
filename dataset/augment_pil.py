@@ -370,7 +370,8 @@ class Augmentation(object):
 if __name__ == '__main__':
     aug = Augmentation()
     img = Image.open('./test.jpg')
-    target = np.array([[141/500, 50/333, 500/500, 330/333, 5]])
+    # Note: the target is
+    target = np.array([[141/500, 50/333, 500/500, 330/333, 6]])
     res_np, box, label = aug(img, target[:, :4], target[:, 4])
     res_img, _, _ = ToPILImage()(res_np)
     res_img.show()

@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import numpy as np
 import torch
 import os
@@ -21,11 +24,7 @@ def demo(img_list, save_path=None):
     net.load_state_dict(torch.load(cfg.trained_model))
     if cfg.test_cuda: net = net.cuda()
     net.eval()
-    if cfg.use_office:
-        mean = (0, 0, 0)
-    else:
-        mean = (104, 117, 123) if use_cv2 else (123, 117, 104)
-    transform = BaseTransform(size=416, mean=mean, scale=True)
+    transform = BaseTransform(size=416, mean=(0, 0, 0), scale=True)
     for img in img_list:
         if use_cv2:
             image = cv2.imread(img)

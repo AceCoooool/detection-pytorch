@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import os.path
 import time
 import importlib

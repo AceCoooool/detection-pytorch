@@ -1,5 +1,16 @@
 from torch import nn
 
+cfg = {
+    'voc': {'tiny': False, 'voc': True, 'num': 18, 'flag': [1, 1, 0] * 3 + [1, 0, 1] * 2 + [0, 1, 0],
+            'size_flag': [3, 6, 9, 11, 14, 16], 'pool': [0, 1, 4, 7, 13]},
+    'coco': {'tiny': False, 'voc': False, 'num': 18, 'flag': [1, 1, 0] * 3 + [1, 0, 1] * 2 + [0, 1, 0],
+             'size_flag': [3, 6, 9, 11, 14, 16], 'pool': [0, 1, 4, 7, 13]},
+    'tiny-voc': {'tiny': True, 'voc': True, 'num': 7, 'flag': [1] * 7,
+                 'size_flag': [], 'pool': [0, 1, 2, 3, 4]},
+    'tiny-coco': {'tiny': True, 'voc': False, 'num': 7, 'flag': [1] * 7,
+                  'size_flag': [], 'pool': [0, 1, 2, 3, 4]},
+}
+
 
 # module1: conv+bn+leaky_relu
 class ConvLayer(nn.Module):
@@ -34,16 +45,17 @@ class ReorgLayer(nn.Module):
         return x.view(B, s * s * C, H // s, W // s)
 
 
-def darknet(cfg):
-    in_c, out_c = 3, 16 if cfg.tiny else 32
-    flag, pool, size_flag = cfg.flag, cfg.pool, cfg.size_flag
+# Note: use cfg for expand to tiny darknet
+def darknet(cfg=cfg['voc']):
+    in_c, out_c = 3, 16 if cfg['tiny'] else 32
+    flag, pool, size_flag = cfg['flag'], cfg['pool'], cfg['size_flag']
     layers = []
-    for i in range(cfg.num):
+    for i in range(cfg['num']):
         ksize = 1 if i in size_flag else 3
         if i < 13:
             layers.append(ConvLayer(in_c, out_c, ksize, same_padding=True))
             layers.append(nn.MaxPool2d(2)) if i in pool else None
-            layers += [nn.ReflectionPad2d([0, 1, 0, 1]), nn.MaxPool2d(2, 1)] if i == 5 and cfg.tiny else []
+            layers += [nn.ReflectionPad2d([0, 1, 0, 1]), nn.MaxPool2d(2, 1)] if i == 5 and cfg['tiny'] else []
         else:
             layers.append(nn.MaxPool2d(2)) if i in pool else None
             layers.append(ConvLayer(in_c, out_c, ksize, same_padding=True))
@@ -52,17 +64,8 @@ def darknet(cfg):
 
 
 if __name__ == '__main__':
-    from yolo.config import yolo_voc as cfg
     import torch
-    import cv2
-    from torchvision import transforms
-    net = nn.ModuleList(darknet(cfg))
-    net.load_state_dict(torch.load('../weights/yolo/darknet.pth'))
 
-    img = cv2.imread('../results/dog.jpg')
-    img = cv2.resize(img, (416, 416))
-    t = transforms.ToTensor()
-    img = t(img).unsqueeze(0)
-    for i in range(len(net)):
-        img = net[i](img)
-
+    net = nn.Sequential(*darknet(cfg['voc']))
+    img = torch.randn((1, 3, 416, 416))
+    print(net(img).size())

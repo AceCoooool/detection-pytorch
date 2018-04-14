@@ -1,3 +1,6 @@
+import sys
+
+sys.path.insert(0, '..')
 import numpy as np
 import torch
 import os
@@ -40,11 +43,11 @@ def demo(img_list, save_path=None):
             dets = y[0, i][idx].view(-1, 5)
             if dets.numel() == 0:
                 continue
-            print('Find {} {} for {}.'.format(dets.size(0), labelmap[i-1], img.split('/')[-1]))
+            print('Find {} {} for {}.'.format(dets.size(0), labelmap[i - 1], img.split('/')[-1]))
             score, loc = dets[:, 0], dets[:, 1:].cpu().numpy() * scale
             for k in range(len(score)):
-                label = '{} {:.2f}'.format(labelmap[i-1], score[k])
-                draw_box(image, label, loc[k], i-1)
+                label = '{} {:.2f}'.format(labelmap[i - 1], score[k])
+                draw_box(image, label, loc[k], i - 1)
         if use_cv2:
             cv2.imwrite(os.path.join(save_path, img.split('/')[-1]), image)
         else:

@@ -13,7 +13,7 @@ class Yolo(nn.Module):
         super(Yolo, self).__init__()
         self.cfg = cfg
         self.phase = phase
-        self.darknet = nn.ModuleList(darknet(cfg))
+        self.darknet = nn.ModuleList(darknet())
         self.anchors = np.array(cfg.anchors).reshape(-1, 2)
         self.class_num, self.anchor_num = cfg.class_num, self.anchors.shape[0]
         self.feat_size = 13
@@ -79,16 +79,8 @@ def build_yolo(phase, cfg=yolo_voc, eval=False):
 
 
 if __name__ == '__main__':
-    from yolo.utils_yolo.multiloss import YoloLoss
-    import yolo.config.yolo_voc as cfg
-
-    net = build_yolo('train')
-    net = net.cuda()
-    # net.load_state_dict(torch.load('../weights/yolo.pth'))
-    multiloss = YoloLoss(cfg)
+    net = build_yolo('test')
+    net = net.eval()
     img = torch.randn((1, 3, 416, 416))
-    img = img.cuda()
-    targets = [torch.Tensor([[0.1, 0.1, 0.5, 0.3, 6], [0.2, 0.4, 0.4, 0.6, 5]]).cuda()]
     out = net(img)
-    loss = multiloss(out, targets)
-    print(loss)
+    print(out[0].size())

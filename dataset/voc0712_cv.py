@@ -69,7 +69,6 @@ class VOCDetection(data.Dataset):
     def pull_image(self, index):
         img_id = self.ids[index]
         # Note: here use the bgr form (rgb is also do well: remember to change mean)
-        # return cv2.cvtColor(cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
         return cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR)
 
     def pull_anno(self, index):
@@ -116,7 +115,7 @@ class AnnotationTransform(object):
         return res
 
 
-# basic transform: norm+scale
+# basic transform: norm+scale, mean is bgr form
 # Note: weights from yolo-official not minus mean but with scale
 class BaseTransform(object):
     def __init__(self, size=300, mean=(104, 117, 123), scale=False):
@@ -152,13 +151,12 @@ def draw_box(image, label, box, c):
 
 
 if __name__ == '__main__':
-    from dataset.augment_cv import Augmentation
-
-    root = '/home/ace/data/VOCdevkit'
+    from dataset.config import voc_root
+    root = voc_root
     image_set = [('2007', 'trainval'), ('2012', 'trainval')]
     target_transform = AnnotationTransform()
-    dataset = VOCDetection(root, image_set, transform=Augmentation(), target_transform=target_transform)
+    dataset = VOCDetection(root, image_set, transform=BaseTransform(), target_transform=target_transform)
     print(len(dataset))
     img, gt = dataset[0]
-    print(img)
+    print(img.size())
     print(gt)

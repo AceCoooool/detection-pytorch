@@ -106,7 +106,6 @@ if __name__ == '__main__':
 
     feat = resnet101_feat()
     net = nn.Sequential(*feat)
-    print(net)
-    # img = torch.randn((1, 3, 300, 300))
-    # img = net(img)
-    # print(img.size())
+    img = torch.randn((1, 3, 300, 300))
+    img = net(img)
+    print(img.size())

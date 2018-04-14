@@ -73,19 +73,19 @@ def load_from_npz(net, fname, num_conv=None):
 
 
 if __name__ == '__main__':
-    # from torchvision.models import resnet101
-    # from ssd.ssd300 import build_ssd
-    #
-    # ssd = build_ssd('train', bone='res101')
-    # net = resnet101(pretrained=True)
-    # weight_convert(ssd.bone.state_dict(), net.state_dict(), '../weights/res_feat.pth', l=len(ssd.bone.state_dict()))
-    from yolo.yolov2 import build_yolo
-    from torch import nn
+    from torchvision.models import resnet101
+    from ssd.ssd300 import build_ssd
 
-    net = build_yolo('train')
-    # print(net.state_dict().keys())
-    # load_from_npz(net, '../weights/darknet19.weights.npz')
-    # torch.save(net.state_dict(), '../weights/darknet.pth')
-    older = torch.load('../weights/yolo-voc.pth')
-    new = net.state_dict()
-    weight_convert(new, older, '../weights/yolo/yolo-voc.pth')
+    ssd = build_ssd('train', bone='res101')
+    net = resnet101(pretrained=True)
+    weight_convert(ssd.bone.state_dict(), net.state_dict(), '../weights/ssd/res_feat.pth', len(ssd.bone.state_dict()))
+    # from yolo.yolov2 import build_yolo
+    # from torch import nn
+    #
+    # net = build_yolo('train')
+    # # print(net.state_dict().keys())
+    # # load_from_npz(net, '../weights/darknet19.weights.npz')
+    # # torch.save(net.state_dict(), '../weights/darknet.pth')
+    # older = torch.load('../weights/yolo-voc.pth')
+    # new = net.state_dict()
+    # weight_convert(new, older, '../weights/yolo/yolo-voc.pth')

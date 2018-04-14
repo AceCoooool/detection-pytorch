@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import os.path
 import time
 import torch
@@ -27,9 +30,9 @@ if cfg.resume:
     print('Resuming training, loading {}...'.format(cfg.resume))
     net.load_state_dict(torch.load(cfg.resume))
 else:
-    vgg_weights = torch.load(cfg.save_folder + cfg.basenet)
+    bone_weights = torch.load(cfg.save_folder + cfg.basenet)
     print('Loading base network...')
-    net.bone.load_state_dict(vgg_weights)
+    net.bone.load_state_dict(bone_weights)
 
 if not cfg.resume:
     print('Initializing weights...')
@@ -81,8 +84,8 @@ for epoch in range(cfg.epoch_num):
         t1 = time.time()
         if i % 10 == 0:
             print('Timer: %.4f sec.' % (t1 - t0))
-            print('epoch ' + repr(epoch) + 'iter ' + repr(i) + ' || Loss: %.4f || ' % (loss.item()), end=' ')
+            print('epoch ' + repr(epoch) + ' iter ' + repr(i) + ' || Loss: %.4f || ' % (loss.item()), end=' ')
     if epoch % 20 == 0 and epoch != 0:
         print('Saving state, epoch: ', epoch)
-        torch.save(net.state_dict(), '../weights/ssd300_' + repr(epoch) + '.pth')
-torch.save(net.state_dict(), '../weights/final.pth')
+        torch.save(net.state_dict(), '../weights/ssd/ssd300_' + repr(epoch) + '.pth')
+torch.save(net.state_dict(), '../weights/ssd/final.pth')

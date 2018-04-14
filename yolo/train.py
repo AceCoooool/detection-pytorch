@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import os.path
 import time
 import importlib
@@ -70,9 +73,9 @@ for epoch in range(cfg.epoch_num):
         idx = randint(0, cfg.multi_len)
         img_size = cfg.multi_scale_img_size[idx]
         print('Using scale of %.d !!!' % img_size)
-        # TODO: test the largest size before training --- avoid out of memory
+        # Note: test the largest size before training --- avoid out of memory
         dataset = VOCDetection(cfg.voc_root, cfg.train_sets,
-                               Augmentation(size=img_size, scale=True), AnnotationTransform())
+                               Augmentation(size=img_size, mean=(0, 0, 0), scale=True), AnnotationTransform())
         data_loader = DataLoader(dataset, cfg.batch_size, num_workers=cfg.num_workers,
                                  shuffle=True, collate_fn=detection_collate, pin_memory=True)
         epoch_size = len(dataset) // cfg.batch_size

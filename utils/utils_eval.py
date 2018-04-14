@@ -9,7 +9,6 @@ from dataset.config import annopath, imgsetpath, devkit_path
 
 
 def get_voc_results_file_template(image_set, cls):
-    # VOCdevkit/VOC2007/results/det_test_aeroplane.txt
     filename = 'det_' + image_set + '_%s.txt' % (cls)
     filedir = os.path.join(devkit_path, 'results')
     if not os.path.exists(filedir):
@@ -24,8 +23,6 @@ def write_voc_results_file(all_boxes, dataset):
         filename = get_voc_results_file_template('test', cls)
         with open(filename, 'wt') as f:
             for im_ind, index in enumerate(dataset.ids):
-            # TODO: delete
-            # for im_ind, index in enumerate(dataset.ids[:50]):
                 dets = all_boxes[cls_ind + 1][im_ind]
                 if dets == []:
                     continue
@@ -158,8 +155,6 @@ cachedir: Directory for caching the annotations
     with open(imagesetfile, 'r') as f:
         lines = f.readlines()
     imagenames = [x.strip() for x in lines]
-    # TODO: delete
-    # imagenames = imagenames[:50]
     if not os.path.isfile(cachefile):
         # load annots
         recs = {}

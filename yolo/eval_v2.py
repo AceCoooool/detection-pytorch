@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import torch
 import os.path
 import numpy as np
@@ -9,14 +12,13 @@ from utils.extras import Timer, get_output_dir
 from utils.utils_eval import voc_eval
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
-
 if use_cv2:
     from dataset.voc0712_cv import VOCDetection, BaseTransform, AnnotationTransform
 else:
     from dataset.voc0712_pil import VOCDetection, BaseTransform, AnnotationTransform
 
 
-def pred_file(filename, files, office):
+def pred_file(filename, files):
     # Note: delete all the exists files
     [os.remove(file) for file in files if os.path.isfile(file)]
     print('Loading trained network ...')
@@ -25,11 +27,7 @@ def pred_file(filename, files, office):
     net.eval()
     net = net.cuda() if cfg.test_cuda else net
     print('Loading VOC dataset ...')
-    if office:
-        mean = (0, 0, 0)
-    else:
-        mean = (104, 117, 123) if use_cv2 else (123, 117, 104)
-    transform = BaseTransform(size=416, mean=mean, scale=True)
+    transform = BaseTransform(size=416, mean=(0, 0, 0), scale=True)
     dataset = VOCDetection(cfg.voc_root, [('2007', 'test')], transform, AnnotationTransform())
     num_images = len(dataset)
     _t = {'im_detect': Timer(), 'misc': Timer()}
@@ -37,7 +35,6 @@ def pred_file(filename, files, office):
     x = torch.randn((1, 3, 416, 416))
     x = x.cuda() if cfg.test_cuda else x
     for i in range(num_images):
-        print('Testing image {:d}/{:d}....'.format(i + 1, num_images))
         im, gt, h, w = dataset.pull_item(i)
         idx = dataset.ids[i][1]
         x.copy_(im.unsqueeze(0))
@@ -45,7 +42,6 @@ def pred_file(filename, files, office):
         with torch.no_grad():
             y = net(x)
         detect_time = _t['im_detect'].toc(avg=False)
-        # TODO: unfinish
         for k in range(0, y.size(1)):
             dets = y[0, k, :]
             mask = dets[:, 0].gt(0.).expand(5, dets.size(0)).t()
@@ -66,11 +62,12 @@ def pred_file(filename, files, office):
                     f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'
                             .format(idx, cls_dets[j, 4],
                                     cls_dets[j, 0], cls_dets[j, 1], cls_dets[j, 2], cls_dets[j, 3]))
+            print('Testing image {:d}/{:d} {:.3f}s....'.format(i + 1, num_images, detect_time))
 
 
 # evaluate map
 def test_map(files):
-    annopath = os.path.join(cfg.voc_root, 'VOC2007', 'Annotations', '%s.xml')
+    annopath = os.path.join(cfg.voc_root, 'VOC2007', 'Annotations', '{:s}.xml')
     imagesetfile = os.path.join(cfg.voc_root, 'VOC2007', 'ImageSets', 'Main', 'test.txt')
     cachedir = os.path.join(cfg.voc_root, 'annotations_cache')
     aps = []
@@ -92,5 +89,5 @@ if __name__ == '__main__':
     filename = output_dir + '/all.txt'
     files = [output_dir + '/' + name + '.txt' for name in cfg.classes]
     if not os.path.isfile(filename):
-        pred_file(filename, files, cfg.use_office)
+        pred_file(filename, files)
     map = test_map(files)

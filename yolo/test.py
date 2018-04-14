@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import importlib
 import torch
 from dataset.config import VOC_CLASSES as labelmap
@@ -21,6 +24,7 @@ def test(net, testset, filename, transform):
         img = testset.pull_image(i)
         img_id, annotation = testset.pull_anno(i)
         x, _, _ = transform(img)
+        x = x[:, :, (2, 1, 0)] if use_cv2 else x
         x = torch.from_numpy(x).permute(2, 0, 1).unsqueeze(0)
         with open(filename, mode='a') as f:
             f.write('\n ground truth for: ' + img_id + '\n')
@@ -58,7 +62,7 @@ def test(net, testset, filename, transform):
 if __name__ == '__main__':
     file = get_output_dir(cfg.output_folder, 'test')
     filename = file + '/test.txt'
-    open(filename, 'w').close()   # clean the txt file
+    open(filename, 'w').close()  # clean the txt file
     # load network
     net = build_yolo('test')
     net.load_state_dict(torch.load(cfg.trained_model))
@@ -68,9 +72,5 @@ if __name__ == '__main__':
         net = net.cuda()
     # load dataset
     testset = VOCDetection(cfg.voc_root, [('2007', 'test')], None, AnnotationTransform())
-    if cfg.use_office:
-        mean = (0, 0, 0)
-    else:
-        mean = (104, 117, 123) if use_cv2 else (123, 117, 104)
-    transform = BaseTransform(size=416, mean=mean, scale=True)
+    transform = BaseTransform(size=416, mean=(0, 0, 0), scale=True)
     test(net, testset, filename, transform)

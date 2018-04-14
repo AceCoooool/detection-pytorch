@@ -1,9 +1,11 @@
+import sys
+
+sys.path.append('..')
 import torch
 from dataset.config import VOC_CLASSES as labelmap
 from utils.extras import get_output_dir
 import ssd.config as cfg
 from ssd.ssd300 import build_ssd
-
 import importlib
 
 use_cv2 = importlib.util.find_spec('cv2') is not None
@@ -60,7 +62,7 @@ if __name__ == '__main__':
     file = get_output_dir(cfg.output_folder, 'test')
     filename = file + '/test.txt'
     # load network
-    net = build_ssd('test', bone='vgg')
+    net = build_ssd('test', cfg.bone)
     net.load_state_dict(torch.load(cfg.trained_model))
     net.eval()
     print('Finished loading model !')

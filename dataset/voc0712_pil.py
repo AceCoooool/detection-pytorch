@@ -115,7 +115,7 @@ class AnnotationTransform(object):
         return res
 
 
-# basic transform: norm+scale
+# basic transform: norm+scale, mean: rgb form
 class BaseTransform(object):
     # image: PIL.Image form (output image is np.array)
     def __init__(self, size=300, mean=(123, 117, 104), scale=False):
@@ -159,12 +159,12 @@ def detection_collate(batch):
 
 
 if __name__ == '__main__':
-    from dataset.augment_pil import Augmentation
+    from dataset.config import voc_root
 
-    root = '/home/ace/data/VOCdevkit'
+    root = voc_root
     image_set = [('2007', 'trainval'), ('2012', 'trainval')]
     target_transform = AnnotationTransform()
-    dataset = VOCDetection(root, image_set, transform=Augmentation(), target_transform=target_transform)
+    dataset = VOCDetection(root, image_set, transform=BaseTransform(), target_transform=target_transform)
     img, gt = dataset[0]
-    print(img)
+    print(img.size())
     print(gt)

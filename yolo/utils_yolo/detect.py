@@ -8,7 +8,6 @@ from utils.utils_box import nms
 class Detect(object):
     def __init__(self, cfg, eval=False, top_k=200):
         self.class_num = cfg.class_num
-        self.feat_size = cfg.feat_size
         self.top_k = top_k
         if eval:
             self.nms_t, self.score_t = cfg.eval_nms_threshold, cfg.eval_score_threshold

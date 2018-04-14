@@ -417,3 +417,15 @@ class Augmentation(object):
 
     def __call__(self, img, boxes, labels):
         return self.augment(img, boxes, labels)
+
+
+if __name__ == '__main__':
+    aug = Augmentation()
+    img = cv2.imread('./test.jpg')
+    target = np.array([[141 / 500, 50 / 333, 500 / 500, 330 / 333, 6]])
+    res_np, box, label = aug(img, target[:, :4], target[:, 4])
+    print(box)
+    print(label)
+    cv2.imshow('w1', res_np)
+    cv2.waitKey(0)
+    cv2.destroyWindow('w1')

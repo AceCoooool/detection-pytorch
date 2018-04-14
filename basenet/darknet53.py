@@ -44,6 +44,6 @@ if __name__ == '__main__':
     import torch
     feat = darknet_feat()
     feat = nn.Sequential(*feat)
-    img = torch.ones((1, 3, 416, 416))
+    img = torch.randn((1, 3, 416, 416))
     out = feat(img)
-    print(out)
+    print(out.size())

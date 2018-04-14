@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('..')
 import torch
 import os.path
 import numpy as np
@@ -19,7 +22,7 @@ def pred_file(filename, files):
     # Note: delete all the exists files
     [os.remove(file) for file in files if os.path.isfile(file)]
     print('Loading trained network ...')
-    net = build_ssd('test', bone='vgg')
+    net = build_ssd('test', bone=cfg.bone)
     net.load_state_dict(torch.load(cfg.trained_model))
     net.eval()
     net = net.cuda() if cfg.test_cuda else net
