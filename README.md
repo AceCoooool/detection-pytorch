@@ -9,7 +9,7 @@ This repository is my reproduction of classical object detection in pytorch. （
 
 Note：This implement is mainly based on the [amdegroot's ssd](https://github.com/amdegroot/ssd.pytorch) :+1:. 
 
-**Detail of  instructions are in each sub-direcory**：
+**Detail of  instructions are in each sub-direcory**：[ssd](ssd/README.md)，[yolo](yolo/README.md)，[yolo3](yolo3/README.md)
 
 ## Pre-requisties
 
