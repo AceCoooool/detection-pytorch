@@ -1,5 +1,5 @@
 # detection-pytorch
-This repository is my reproduction of classical object detection in pytorch. （For own study and reference others' implementation --- the code quality may not good :flushed:）
+This repository is my reproduction of classical object detection in pytorch. （For own study and reference others' implementation --- welcome to pull issues :flushed:）
 
 ![](png/demo.gif)
 
