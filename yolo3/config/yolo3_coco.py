@@ -4,7 +4,7 @@ anchors = [10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 3
 
 # test
 use_office = True  # TODO: delete the use_office
-test_cuda = False
+test_cuda = True
 trained_model = '../weights/yolo3/yolo3.pth'
 output_folder = '../results/yolo3'
 

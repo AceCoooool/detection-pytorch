@@ -74,6 +74,8 @@ class Yolo3(nn.Module):
                 out.append(x)
         box_pred3, box_conf3, box_prob3 = list(), list(), list()
         for i in range(len(out)):
+            if not self.priors[i].is_cuda and x.is_cuda:
+                self.priors[i] = self.priors[i].cuda()
             b, c, h, w = out[i].size()
             feat = out[i].permute(0, 2, 3, 1).contiguous().view(b, -1, self.anchor_num, self.class_num + 5)
             box_xy, box_wh = F.sigmoid(feat[..., :2]), feat[..., 2:4].exp()

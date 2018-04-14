@@ -21,7 +21,7 @@ Testing & Evaluation & Demo setting：
 
 ## 2. Demo
 
-Download the pretrained model：[vgg_final]()，[resnet_final]() to `weights/ssd`
+Download the pretrained model：[vgg_final](https://drive.google.com/open?id=1D9pPJWEwK48DWf1mz18Wl4EZHrQCHw8n)，[resnet_final](https://drive.google.com/open?id=10xIt9vbyibwjmifR-PHBJTQNYltrrNQA) to `weights/ssd`
 
 ```shell
 cd ssd
@@ -35,7 +35,7 @@ Note：
 
 ## 3. Training
 
-Download the pretrained base model：[vgg_rfc]()，[res_rfc]() to `weights/ssd`
+Download the pretrained base model：Google Drive --- [vgg_rfc](https://drive.google.com/open?id=1QWjU2r1q9pWdiK9Ju-BpLM1FHGv_X-Dm)，[res_rfc]() . Baidu Drive --- [vgg_rfc](https://pan.baidu.com/s/1PggWixjNfPBb-wzrPFadIA)，[]()  to `weights/ssd`
 
 Change the training setting to your "favoriate"（in `config.py` file）
 
