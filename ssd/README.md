@@ -35,7 +35,7 @@ Note：
 
 ## 3. Training
 
-Download the pretrained base model：Google Drive --- [vgg_rfc](https://drive.google.com/open?id=1QWjU2r1q9pWdiK9Ju-BpLM1FHGv_X-Dm)，[res_rfc](https://drive.google.com/open?id=15jWvpqNR2KK4Tlo3bADrY2sydnzpnVoF) . Baidu Drive --- [vgg_rfc](https://pan.baidu.com/s/1PggWixjNfPBb-wzrPFadIA)，[]()  to `weights/ssd`
+Download the pretrained base model：Google Drive --- [vgg_rfc](https://drive.google.com/open?id=1QWjU2r1q9pWdiK9Ju-BpLM1FHGv_X-Dm)，[res_rfc](https://drive.google.com/open?id=15jWvpqNR2KK4Tlo3bADrY2sydnzpnVoF) . Baidu Drive --- [vgg_rfc](https://pan.baidu.com/s/1PggWixjNfPBb-wzrPFadIA)，[res_rfc](https://pan.baidu.com/s/1WXW7J7fR3h7qbPaKGyZEOw)  to `weights/ssd`
 
 Change the training setting to your "favoriate"（in `config.py` file）
 

@@ -62,7 +62,7 @@ def pred_file(filename, files):
                     f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'
                             .format(idx, cls_dets[j, 4],
                                     cls_dets[j, 0], cls_dets[j, 1], cls_dets[j, 2], cls_dets[j, 3]))
-            print('Testing image {:d}/{:d} {:.3f}s....'.format(i + 1, num_images, detect_time))
+        print('Testing image {:d}/{:d} {:.3f}s....'.format(i + 1, num_images, detect_time))
 
 
 # evaluate map
