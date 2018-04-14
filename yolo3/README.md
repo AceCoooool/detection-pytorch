@@ -6,6 +6,8 @@
 
 All the arguments you may change are in  `yolo3/config/yolo3_coco.py`
 
+（If you did not have GPU，please set `cuda=Fasle` and `test_cuda=False` ）
+
 Demo setting：
 
 - `output_folder`：default folder for "results" 

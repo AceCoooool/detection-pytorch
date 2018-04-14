@@ -37,6 +37,8 @@ PASCAL_VOC 07+12：follow the instructions in [amdegroot's ssd](https://github.c
    sh dataset/scripts/VOC2012.sh # <directory>
    ```
 
+（Note：if your dataset is not in `~/data`，please modify the `dataset/config.py` ’ s home parameter to you data path.）
+
 ## Performance
 
 |  detection model  | mAP(07) | mAP(10) |

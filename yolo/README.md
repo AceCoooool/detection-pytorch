@@ -6,6 +6,8 @@
 
 All the arguments you may change are in  `yolo/config/yolo_voc.py`
 
+（If you did not have GPU，please set `cuda=Fasle` and `test_cuda=False` ）
+
 Training setting：
 
 - `warm_epoch=3`：set first 3 epoches as warm（maybe one epoch is enough）
