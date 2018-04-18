@@ -76,7 +76,7 @@ def test_map(files):
             continue
         filename = files[i]
         rec, prec, ap = voc_eval(filename, annopath, imagesetfile, cls, cachedir,
-                                 ovthresh=0.5, use_07_metric=False)
+                                 ovthresh=0.5, use_07_metric=True)
         aps += [ap]
         print('AP for {} = {:.4f}'.format(cls, ap))
     print('Mean AP = {:.4f}'.format(np.mean(aps)))

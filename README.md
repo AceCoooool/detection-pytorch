@@ -48,7 +48,7 @@ PASCAL_VOC 07+12：follow the instructions in [amdegroot's ssd](https://github.c
 |    SSD (vgg16)    | 77.55%  | 80.10%  | [vgg_final.pth](https://drive.google.com/open?id=1D9pPJWEwK48DWf1mz18Wl4EZHrQCHw8n) | [vgg_final.pth](https://pan.baidu.com/s/1Hr4J4rbpKhyVpIPitPa3fg) |
 |   SSD (res101)    | 75.97%  | 78.26%  | [resnet_final.pth](https://drive.google.com/open?id=10xIt9vbyibwjmifR-PHBJTQNYltrrNQA) | [resnet_final.pth](https://pan.baidu.com/s/1hZ9Tro840omWn-TKEndiVg) |
 | YOLOv2 (official) | 73.40%  | 75.80%  | [yolo-voc.pth](https://drive.google.com/open?id=18J1jkENolbV_UW8l2Ds-RhNwFRUFtUZH) | [yolo-voc.pth](https://pan.baidu.com/s/1T8uD9SF8NlrSJKkZrCQDWg) |
-|   YOLOv2 (here)   |         |         |                                                              |                                                              |
+|   YOLOv2 (here)   | 67.73%  | 69.61%  |                                                              |                                                              |
 | YOLOv3(official)  |         |         | [yolo3.pth](https://drive.google.com/open?id=1c7LN6LraRE3ZxNl00ai_0xWtA74jMr7_) | [yolo3.pth](https://pan.baidu.com/s/1KkRrPjrz1CkMnuqPst64ig) |
 
 Note：
