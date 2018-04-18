@@ -36,7 +36,7 @@ Note：
 
 ## 3. Training
 
-Download the pretrained base model：[darknet](https://drive.google.com/open?id=1Kmt3twmX7k18rtyID_zj4HR17sAL5L9P) to `weights/yolo`
+Download the pretrained base model：[darknet](https://drive.google.com/open?id=1Kmt3twmX7k18rtyID_zj4HR17sAL5L9P) [[baiduYun](https://pan.baidu.com/s/1fzojLMKnKbaMdPM-PqD8LQ)] to `weights/yolo`
 
 Change the training setting to your "favoriate"（in `config/yolo_voc.py` file）
 
